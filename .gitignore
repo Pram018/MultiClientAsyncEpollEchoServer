@@ -1,0 +1,14 @@
+# Build directories
+/build/
+
+# Compiled object files
+*.o
+
+# Executables
+*.out
+
+# CMake genrated files
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+Makefile
