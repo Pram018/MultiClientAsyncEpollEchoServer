@@ -7,12 +7,15 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 # Output directories
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
-# Source files
-file(GLOB_RECURSE SOURCES src/*.cpp)
-
 # Include directories
 include_directories(include)
 
-# Executable
-add_executable(server ${SOURCES})
+# Baseline server (your original single-threaded server.cpp)
+add_executable(baseline_server src/server.cpp)
 
+# Threadpool server (modular version with Server + ThreadPool + main)
+add_executable(threadpool_server
+    src/main.cpp
+    src/Server.cpp
+    src/ThreadPool.cpp
+)
