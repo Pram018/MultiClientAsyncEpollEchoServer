@@ -1,5 +1,5 @@
-#include "include/ThreadPool.h"
-#include "include/server.h"
+#include "ThreadPool.h"
+#include "server.h"
 #include <thread>   //std::thread::hardware_concurrency
 
 int main() {
