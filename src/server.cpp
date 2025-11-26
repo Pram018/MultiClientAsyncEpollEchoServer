@@ -1,69 +1,91 @@
-#include "server.h"
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <unistd.h>
 #include <iostream>
-#include <cstring>
+#include <sys/socket.h>
+#include <sys/types.h>
+#include <sys/epoll.h>
+#include <netdb.h>
+#include <unistd.h>
+#include <arpa/inet.h>
+#include <string.h>
+#include <string>
+#include <fcntl.h>
 
-Server::Server(int port, ThreadPool& pool)
-    : port_(port), threadPool_(pool) {}
 
-void Server::start() {
-    server_fd_ = socket(AF_INET, SOCK_STREAM, 0);
-    if (server_fd_ == -1) {
-        perror("Socket failed");
-        exit(EXIT_FAILURE);
-    }
 
-    // Allow quick restart without "Address already in use"
-    int opt = 1;
-    setsockopt(server_fd_, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt));
+int main() {
 
-    sockaddr_in address{};
-    address.sin_family = AF_INET;
-    address.sin_addr.s_addr = INADDR_ANY;
-    address.sin_port = htons(port_);
+	// Creating a socket
+	int sock = socket(AF_INET, SOCK_STREAM, 0);
+	if(sock == -1)
+	{
+		std::cerr << "Socket failed";
+		exit(EXIT_FAILURE);
+	}
+	
+	// Making it  a non blocking
+	int flags = fcntl(sock,F_GETFL, 0);
+	if(flags == -1) 
+	{
+		std::cerr << "fcntl(F_GETFL) failed";
+		exit(EXIT_FAILURE);
+	}
+	
+	// Declaring the port
+	const int PORT = 54000;
 
-    if (bind(server_fd_, (struct sockaddr*)&address, sizeof(address)) < 0) {
-        perror("Bind failed");
-        exit(EXIT_FAILURE);
-    }
+	// bind it to a port
+	struct sockaddr_in address;
+	memset(&address, 0, sizeof(address));
+	address.sin_family = AF_INET;
+	address.sin_port = htons(54000);
+	address.sin_addr.s_addr = INADDR_ANY;
 
-    if (listen(server_fd_, SOMAXCONN) < 0) {
-        perror("Listen failed");
-        exit(EXIT_FAILURE);
-    }
+	if(bind(sock, (struct sockaddr*)&aaddress, size0f(address)) == -1) 
+	{
+		std::cerr << "bind failed";
+		exit(EXIT_FAILURE);
+	}
 
-    std::cout << "Server listening on port " << port_ << std::endl;
+	// mark the socket for listening in
+	if(listen(sock, SOMAXCONN) == 1)
+	{
+		std::cerr << "Can't listen";
+		exit(EXIT_FAILURE);
+	}
 
-    while (true) {
-        socklen_t addrlen = sizeof(address);
-        int client_fd = accept(server_fd_, (struct sockaddr*)&address, &addrlen);
-        if (client_fd < 0) {
-            perror("Accept failed");
-            continue;
-        }
+	// Creating a epool instance
+	int epoll_fd = epoll_create1(0);
+	if(epoll_fd == -1) 
+	{
+		throw std::runtime_error("Failed to connect epoll instance");
+	}
 
-        // Hand off client work to the thread pool
-        threadPool_.enqueue([this, client_fd]() {
-            handleClient(client_fd);
-        });
-    }
-}
+	// Adding the listening sockets to epoll
+	struct epoll_event ev;
+	ev.events = EPOLLIN;
+	ev.data.fd = sock;
 
-void Server::handleClient(int client_fd) {
-    char buffer[1024] = {0};
-    int bytes_read = read(client_fd, buffer, sizeof(buffer));
-    if (bytes_read <= 0) {
-        close(client_fd);
-        return;
-    }
+	if(epoll_ctl(epoll_fd, EPOLL_CTL_ADD, sock, &ev) == -1)
+	{
+		throw std::runtime_error("failes to add sock to epoll");
+	}
 
-    std::cout << "Received:\n" << buffer << std::endl;
 
-    const char* response =
-        "HTTP/1.1 200 OK\r\nContent-Length: 13\r\n\r\nHello, World!";
-    send(client_fd, response, strlen(response), 0);
 
-    close(client_fd);
-}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
