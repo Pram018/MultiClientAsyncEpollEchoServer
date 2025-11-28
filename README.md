@@ -25,7 +25,8 @@
 #### 1.Clone the repository
 
 ```bash
-
+https://github.com/Pram018/MultiClientAsyncEpollEchoServer.git
+cd MultiClientAsyncEpollEchoServer/
 ```
 
 #### 2.Build the project
@@ -49,3 +50,4 @@ You can use `netcat` or a custom client:
 ```bash
 telnet 127.0.0.1 54000
 ```
+
