@@ -1,26 +1,25 @@
 ## MULTICLIENT EPOOL BASED ECHO SERVER
 
-### ENVIORNMENT
+### Enviornment
 * ***Operating System:*** Pop!_OS (Ubuntu-based)
 * ***Language:*** C++
 * ***Build System:*** CMake
 * ***Dependencies:*** Standard POSIX socket libraries (available by default on Linux)
 
-### PROJECT STRUCTURE
+### Project structure
+```bash
+MultiClientAsyncEpollEchoServer/
+├── CMakeLists.txt
+├── LICENSE
+├── README.md
+└── src
+    └── server.cpp
+```
+### Instructions to run the project
 
-
-
-
-
-
-### INSTRUCTIONS TO RUN THE PROJECT
-
-#### REQUIREMENTS
+#### Requirements
 * gcc or g++ (minimum 12.3.0)
 * Cmake (4.2.0)
-
-#### CLONE THE REPO
-
 
 #### 1.Clone the repository
 
@@ -50,4 +49,5 @@ You can use `netcat` or a custom client:
 ```bash
 telnet 127.0.0.1 54000
 ```
+
 
